@@ -19,7 +19,7 @@ public class Task {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private TaskList list;
 
     @Column(nullable = false) private String name;
@@ -28,7 +28,7 @@ public class Task {
     @Column(nullable = false) private Long hoursEstimated;
 
     @Column(nullable = false)
-    @ColumnDefault("CURRENT_DATE")
+    @ColumnDefault("CURRENT_TIMESTAMP")
     private Date creationDate;
     private Date completionDate;
     private Long hoursWorked;

@@ -4,6 +4,8 @@ import com.codecool.backend.model.dto.NewTaskDTO;
 import com.codecool.backend.model.dto.TaskCompletionDTO;
 import com.codecool.backend.model.dto.TaskDTO;
 import com.codecool.backend.model.dto.TaskListDTO;
+import com.codecool.backend.model.entity.Task;
+import com.codecool.backend.model.entity.TaskList;
 import com.codecool.backend.repository.AccountRepository;
 import com.codecool.backend.repository.TaskListRepository;
 import com.codecool.backend.repository.TaskRepository;
@@ -11,7 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -22,11 +29,34 @@ public class ApplicationService {
 
 
     public TaskListDTO getTaskList(Long id) {
-        return null;
+        AtomicReference<TaskListDTO> taskListDTO = new AtomicReference<>();
+
+        taskListRepository.findById(id).ifPresent(taskList -> {
+            taskListDTO.set(TaskListDTO.builder()
+                    .id(taskList.getId())
+                    .name(taskList.getName())
+                    .tasks(
+                            sort(
+                                    taskList.getTasks().stream()
+                                            .filter(task -> !task.getDeleted())
+                                            .map(TaskDTO::of),
+                                    "created", "asc"
+                            )
+                    )
+                    .build()
+            );
+        });
+
+        return taskListDTO.get();
     }
 
     public List<TaskDTO> getSortedTasks(Long listId, String value, String direction) {
-        return null;
+        return sort(
+                taskListRepository.findById(listId).map(TaskList::getTasks).orElse(Set.of()).stream()
+                        .filter(task -> !task.getDeleted())
+                        .map(TaskDTO::of),
+                value, direction
+        );
     }
 
     public void addNewTask(Long listId, NewTaskDTO newTask) {
@@ -36,5 +66,24 @@ public class ApplicationService {
     }
 
     public void deleteTask(Long id) {
+    }
+
+
+    public List<TaskDTO> sort(Stream<TaskDTO> tasks, String value, String direction) {
+        switch (value.toLowerCase()) {
+            case "created":
+                return tasks.sorted(
+                        direction.equalsIgnoreCase("asc") ?
+                        Comparator.comparing(TaskDTO::getCreationDate) :
+                        Comparator.comparing(TaskDTO::getCreationDate).reversed()
+                ).collect(Collectors.toList());
+            case "deadline":
+                return tasks.sorted(
+                        direction.equalsIgnoreCase("asc") ?
+                                Comparator.comparing(TaskDTO::getDeadline) :
+                                Comparator.comparing(TaskDTO::getDeadline).reversed()
+                ).collect(Collectors.toList());
+            default: return tasks.collect(Collectors.toList());
+        }
     }
 }

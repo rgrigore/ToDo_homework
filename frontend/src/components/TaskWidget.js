@@ -6,6 +6,7 @@ import Dropdown from "react-bootstrap/cjs/Dropdown";
 import Button from "react-bootstrap/cjs/Button";
 import AddTaskModal from "./AddTaskModal";
 import axios from "axios";
+import CompleteTaskModal from "./CompleteTaskModal";
 
 const TaskWidget = props => {
 	const [listToLoad, setListToLoad] = useState(0);
@@ -18,18 +19,15 @@ const TaskWidget = props => {
 		value: "created",
 		direction: "asc"
 	})
+
 	const [showAdd, setShowAdd] = useState(false);
+	const handleShowAdd = () => setShowAdd(true);
+	const handleHideAdd = () => setShowAdd(false);
 
-	const handleShow = () => setShowAdd(true);
-	const handleHide = () => setShowAdd(false);
-
-	const addTask = newTask => {
-
-	}
-
-	const selectSort = (value, direction) => {
-		setSort({value: value, direction: direction});
-	}
+	const [showComplete, setShowComplete] = useState(false);
+	const [taskToComplete, setTaskToComplete] = useState(-1);
+	const handleShowComplete = () => setShowComplete(true);
+	const handleHideComplete = () => setShowComplete(false);
 
 	useEffect(() => {
 		setListToLoad(props.listId);
@@ -38,25 +36,59 @@ const TaskWidget = props => {
 	useEffect(() => {
 		axios.get(
 			`/list/${listToLoad}/get`
-		).then(response => {
+		).then(r => {
 			setTaskList({
-				name: response.data.name,
-				id: response.data.id
+				name: r.data.name,
+				id: r.data.id
 			});
-			setTasks(response.data.tasks);
+			setTasks(r.data.tasks);
 		});
 	}, [listToLoad]);
 
 	useEffect(() => {
+		loadTasks();
+		// eslint-disable-next-line
+	}, [sort.value, sort.direction]);
+
+	const loadTasks = () => {
 		axios.get(
 			`/list/${taskList.id}/sorted`,
 			{params: {
 					value: sort.value,
 					direction: sort.direction
 				}}
-		).then(response => setTasks(response.data));
-		// eslint-disable-next-line
-	}, [sort.value, sort.direction]);
+		).then(r => setTasks(r.data));
+	}
+
+	const selectSort = (value, direction) => {
+		setSort({value: value, direction: direction});
+	}
+
+	const handleCompleteTask = taskId => {
+		setTaskToComplete(taskId);
+		handleShowComplete();
+	}
+
+	const finishTask = (taskId, time) => {
+		axios.post(
+			`/task/${taskId}/complete`,
+			{hoursWorked: time}
+		).then(() => loadTasks());
+	}
+
+	const deleteTask = taskId => {
+		axios.post(
+			`/task/${taskId}/delete`,
+			{}
+		).then(() => loadTasks());
+	}
+
+	const addTask = newTask => {
+		axios.post(
+			`/list/${taskList.id}/add`,
+			newTask
+		).then(() => loadTasks());
+	}
 
 	return (
 		<div className={'d-flex flex-column mx-auto w-75 h-100'}>
@@ -73,8 +105,9 @@ const TaskWidget = props => {
 				</div>
 				<TaskContainer tasks={tasks} />
 			</div>
-			<Button variant={"primary"} size={"lg"} className={'ml-auto mt-2'} onClick={handleShow}>Add task</Button>
-			<AddTaskModal open={showAdd} handleClose={handleHide} handleAdd={addTask} />
+			<Button variant={"primary"} size={"lg"} className={'ml-auto mt-2'} onClick={handleShowAdd}>Add task</Button>
+			<AddTaskModal open={showAdd} handleClose={handleHideAdd} handleAdd={addTask} />
+			<CompleteTaskModal open={showComplete} handleClose={handleHideComplete} handleDone={finishTask} taskId={taskToComplete} />
 		</div>
 	);
 };

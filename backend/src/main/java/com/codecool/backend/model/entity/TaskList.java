@@ -22,9 +22,9 @@ public class TaskList {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Account account;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "list_id")
-    private List<Task> tasks = new ArrayList<>();
+//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name = "list_id")
+//    private List<Task> tasks = new ArrayList<>();
 
     @Column(nullable = false) private String name;
 }

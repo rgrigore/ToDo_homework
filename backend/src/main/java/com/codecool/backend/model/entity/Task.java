@@ -19,8 +19,9 @@ public class Task {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    private TaskList list;
+//    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+//    private TaskList list;
+    @Column(nullable = false) private Long listId; // Hardcoded list
 
     @Column(nullable = false) private String name;
     @Column(nullable = false) private String category;

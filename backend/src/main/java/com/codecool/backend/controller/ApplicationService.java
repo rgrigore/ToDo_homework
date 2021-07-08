@@ -25,6 +25,9 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ApplicationService {
+
+    private final static Long HARDCODED_LIST_ID = 0L;
+
     private final AccountRepository accountRepository;
     private final TaskListRepository taskListRepository;
     private final TaskRepository taskRepository;
@@ -33,13 +36,16 @@ public class ApplicationService {
     public TaskListDTO getTaskList(Long id) {
         AtomicReference<TaskListDTO> taskListDTO = new AtomicReference<>();
 
-        taskListRepository.findById(id).ifPresent(taskList -> {
+//        taskListRepository.findById(id).ifPresent(taskList -> {
             taskListDTO.set(TaskListDTO.builder()
-                    .id(taskList.getId())
-                    .name(taskList.getName())
+//                    .id(taskList.getId())
+                    .id(HARDCODED_LIST_ID)
+//                    .name(taskList.getName())
+                    .name("List example")
                     .tasks(
                             sort(
-                                    taskList.getTasks().stream()
+//                                    taskList.getTasks().stream()
+                                    taskRepository.findAllByListId(HARDCODED_LIST_ID).stream()
                                             .filter(task -> !task.getDeleted())
                                             .map(TaskDTO::of),
                                     "created", "asc"
@@ -47,14 +53,15 @@ public class ApplicationService {
                     )
                     .build()
             );
-        });
+//        });
 
         return taskListDTO.get();
     }
 
     public List<TaskDTO> getSortedTasks(Long listId, String value, String direction) {
         return sort(
-                taskListRepository.findById(listId).map(TaskList::getTasks).orElse(new ArrayList<>()).stream()
+//                taskListRepository.findById(listId).map(TaskList::getTasks).orElse(new ArrayList<>()).stream()
+                taskRepository.findAllByListId(HARDCODED_LIST_ID).stream()
                         .filter(task -> !task.getDeleted())
                         .map(TaskDTO::of),
                 value, direction
@@ -69,10 +76,11 @@ public class ApplicationService {
             return;
         }
 
-        taskListRepository.findById(listId).ifPresent(taskList -> {
+//        taskListRepository.findById(listId).ifPresent(taskList -> {
             taskRepository.save(
                     Task.builder()
-                            .list(taskList)
+//                            .list(taskList)
+                            .listId(HARDCODED_LIST_ID)
                             .name(newTask.getName())
                             .category(newTask.getCategory())
                             .deadline(newTask.getDeadline())
@@ -82,7 +90,7 @@ public class ApplicationService {
                             .deleted(false)
                             .build()
             );
-        });
+//        });
     }
 
     public void completeTask(Long id, TaskCompletionDTO taskCompletion) {

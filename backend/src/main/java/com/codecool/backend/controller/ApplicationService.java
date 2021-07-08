@@ -13,9 +13,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,7 +54,7 @@ public class ApplicationService {
 
     public List<TaskDTO> getSortedTasks(Long listId, String value, String direction) {
         return sort(
-                taskListRepository.findById(listId).map(TaskList::getTasks).orElse(Set.of()).stream()
+                taskListRepository.findById(listId).map(TaskList::getTasks).orElse(new ArrayList<>()).stream()
                         .filter(task -> !task.getDeleted())
                         .map(TaskDTO::of),
                 value, direction
@@ -60,12 +62,47 @@ public class ApplicationService {
     }
 
     public void addNewTask(Long listId, NewTaskDTO newTask) {
+        if (newTask.getDeadline().isBefore(LocalDate.now())) {
+            return;
+        }
+        if (newTask.getEstimate() < 0) {
+            return;
+        }
+
+        taskListRepository.findById(listId).ifPresent(taskList -> {
+            taskRepository.save(
+                    Task.builder()
+                            .list(taskList)
+                            .name(newTask.getName())
+                            .category(newTask.getCategory())
+                            .deadline(newTask.getDeadline())
+                            .hoursEstimated(newTask.getEstimate())
+                            .creationDate(LocalDateTime.now())
+                            .completed(false)
+                            .deleted(false)
+                            .build()
+            );
+        });
     }
 
     public void completeTask(Long id, TaskCompletionDTO taskCompletion) {
+        taskRepository.findById(id).ifPresent(task -> {
+            if (!task.getCompleted() && !task.getDeleted()) {
+                task.setHoursWorked(taskCompletion.getHoursWorked());
+                task.setCompletionDate(LocalDateTime.now());
+                task.setCompleted(true);
+                taskRepository.save(task);
+            }
+        });
     }
 
     public void deleteTask(Long id) {
+        taskRepository.findById(id).ifPresent(task -> {
+            if (!task.getCompleted()) {
+                task.setDeleted(true);
+                taskRepository.save(task);
+            }
+        });
     }
 
 

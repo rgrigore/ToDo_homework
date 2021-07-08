@@ -26,12 +26,12 @@ public class ApplicationController {
     }
 
     @PostMapping("/list/{id}/add")
-    public void addTask(@PathVariable("id") Long listId, NewTaskDTO newTask) {
+    public void addTask(@PathVariable("id") Long listId, @RequestBody NewTaskDTO newTask) {
         service.addNewTask(listId, newTask);
     }
 
     @PostMapping("/task/{id}/complete")
-    public void completeTask(@PathVariable("id") Long taskId, TaskCompletionDTO taskCompletion) {
+    public void completeTask(@PathVariable("id") Long taskId, @RequestBody TaskCompletionDTO taskCompletion) {
         service.completeTask(taskId, taskCompletion);
     }
 

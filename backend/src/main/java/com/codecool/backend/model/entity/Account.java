@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -22,7 +21,7 @@ public class Account {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "account_id")
-    private Set<TaskList> taskLists;
+    private List<TaskList> taskLists = new ArrayList<>();
 
     @Column(nullable = false)
     private String username;

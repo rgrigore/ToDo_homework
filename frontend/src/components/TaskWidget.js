@@ -1,17 +1,19 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import TaskContainer from "./TaskContainer";
 import DropdownButton from "react-bootstrap/cjs/DropdownButton";
 import Dropdown from "react-bootstrap/cjs/Dropdown";
 import Button from "react-bootstrap/cjs/Button";
 import AddTaskModal from "./AddTaskModal";
+import axios from "axios";
 
 const TaskWidget = props => {
+	const [listToLoad, setListToLoad] = useState(0);
 	const [taskList, setTaskList] = useState({
 		name: "List Title",
 		id: 0
 	})
-	const [tasks, setTasks] = useState([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}])
+	const [tasks, setTasks] = useState([])
 	const [sort, setSort] = useState({
 		value: "created",
 		direction: "asc"
@@ -28,6 +30,33 @@ const TaskWidget = props => {
 	const selectSort = (value, direction) => {
 		setSort({value: value, direction: direction});
 	}
+
+	useEffect(() => {
+		setListToLoad(props.listId);
+	}, [props.listId]);
+
+	useEffect(() => {
+		axios.get(
+			`/list/${listToLoad}/get`
+		).then(response => {
+			setTaskList({
+				name: response.data.name,
+				id: response.data.id
+			});
+			setTasks(response.data.tasks);
+		});
+	}, [listToLoad]);
+
+	useEffect(() => {
+		axios.get(
+			`/list/${taskList.id}/sorted`,
+			{params: {
+					value: sort.value,
+					direction: sort.direction
+				}}
+		).then(response => setTasks(response.data));
+		// eslint-disable-next-line
+	}, [sort.value, sort.direction]);
 
 	return (
 		<div className={'d-flex flex-column mx-auto w-75 h-100'}>
@@ -51,7 +80,7 @@ const TaskWidget = props => {
 };
 
 TaskWidget.propTypes = {
-
+	listId: PropTypes.number.isRequired
 };
 
 export default TaskWidget;

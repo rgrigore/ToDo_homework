@@ -41,7 +41,7 @@ public class ApplicationService {
 //                    .id(taskList.getId())
                     .id(HARDCODED_LIST_ID)
 //                    .name(taskList.getName())
-                    .name("List example")
+                    .name("List title")
                     .tasks(
                             sort(
 //                                    taskList.getTasks().stream()

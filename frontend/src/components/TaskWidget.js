@@ -77,7 +77,7 @@ const TaskWidget = props => {
 	}
 
 	const deleteTask = taskId => {
-		axios.post(
+		axios.delete(
 			`/task/${taskId}/delete`,
 		).then(() => loadTasks());
 	}

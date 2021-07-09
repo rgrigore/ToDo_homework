@@ -35,7 +35,7 @@ public class ApplicationController {
         service.completeTask(taskId, taskCompletion);
     }
 
-    @PostMapping("/task/{id}/delete")
+    @DeleteMapping("/task/{id}/delete")
     public void deleteTask(@PathVariable("id") Long taskId) {
         service.deleteTask(taskId);
     }

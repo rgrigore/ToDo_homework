@@ -9,7 +9,7 @@ const Task = props => {
 		test: "red",
 		string: "purple",
 		work: "blue",
-		home: "yellow",
+		home: "orange",
 		hobby: "magenta"
 	};
 

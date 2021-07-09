@@ -125,10 +125,9 @@ Razvan Grigore - [@My Github](https://github.com/rgrigore) [@My LinkedIn](https:
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
 * [Altamira-Software](https://www.linkedin.com/company/altamira-software/)
+* [Codecool Romania :thumbsup:](https://codecool.com/ro/)
 * [Spring Documentation](https://docs.spring.io/)
 * [React Documentation](https://reactjs.org/)
-* [Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/Main_Page)
-* [Codecool Romania :thumbsup:](https://codecool.com/ro/)
 * [Img Shields](https://shields.io)
 
 

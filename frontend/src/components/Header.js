@@ -1,8 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Navbar from "react-bootstrap/cjs/Navbar";
 
-const Header = props => {
+const Header = () => {
 	return (
 		<Navbar bg={"dark"} variant={"dark"}>
 			<Navbar.Collapse className={"justify-content-end"}>
@@ -12,10 +11,6 @@ const Header = props => {
 			</Navbar.Collapse>
 		</Navbar>
 	);
-};
-
-Header.propTypes = {
-
 };
 
 export default Header;

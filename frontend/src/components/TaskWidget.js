@@ -102,9 +102,10 @@ const TaskWidget = props => {
 						<Dropdown.Item as={"button"} onClick={() => selectSort("deadline", "desc")}>deadline desc</Dropdown.Item>
 					</DropdownButton>
 				</div>
-				<TaskContainer tasks={tasks} />
+				<TaskContainer tasks={tasks} handleComplete={handleCompleteTask} handleDelete={deleteTask} />
 			</div>
 			<Button variant={"primary"} size={"lg"} className={'ml-auto mt-2'} onClick={handleShowAdd}>Add task</Button>
+
 			<AddTaskModal open={showAdd} handleClose={handleHideAdd} handleAdd={addTask} />
 			<CompleteTaskModal open={showComplete} handleClose={handleHideComplete} handleDone={finishTask} taskId={taskToComplete} />
 		</div>

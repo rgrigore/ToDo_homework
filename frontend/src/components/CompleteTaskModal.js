@@ -12,11 +12,12 @@ const CompleteTaskModal = props => {
 		if (form.checkValidity() === false) {
 			e.preventDefault();
 			e.stopPropagation();
+		} else {
+			props.handleDone(props.taskId, form.elements.duration.value);
+			props.handleClose();
 		}
 
 		setValidated(true);
-		// props.handleDone(props.taskId, );
-		// props.handleClose();
 	}
 
 	return (

@@ -1,8 +1,6 @@
 package com.codecool.backend.controller;
 
 import com.codecool.backend.model.dto.TaskDTO;
-import com.codecool.backend.repository.AccountRepository;
-import com.codecool.backend.repository.TaskListRepository;
 import com.codecool.backend.repository.TaskRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 class ApplicationServiceTest {
 
-    @MockBean
-    private AccountRepository accountRepository;
-    @MockBean
-    private TaskListRepository taskListRepository;
     @MockBean
     private TaskRepository taskRepository;
 

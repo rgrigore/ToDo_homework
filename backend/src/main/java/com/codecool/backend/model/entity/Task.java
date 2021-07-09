@@ -19,8 +19,6 @@ public class Task {
     @GeneratedValue
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-//    private TaskList list;
     @Column(nullable = false) private Long listId; // Hardcoded list
 
     @Column(nullable = false) private String name;
@@ -28,16 +26,13 @@ public class Task {
     @Column(nullable = false) private Long hoursEstimated;
     @Column(nullable = false) private LocalDate deadline;
 
-//    @Column(columnDefinition = "timestamp default CURRENT_TIMESTAMP")
     @Column(nullable = false)
     private LocalDateTime creationDate;
     private LocalDateTime completionDate;
     private Long hoursWorked;
 
-//    @Column(columnDefinition = "boolean default false")
     @Column(nullable = false)
     private Boolean completed;
-//    @Column(columnDefinition = "boolean default false")
     @Column(nullable = false)
     private Boolean deleted;
 }

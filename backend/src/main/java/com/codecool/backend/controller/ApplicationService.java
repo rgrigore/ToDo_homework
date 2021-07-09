@@ -5,9 +5,6 @@ import com.codecool.backend.model.dto.TaskCompletionDTO;
 import com.codecool.backend.model.dto.TaskDTO;
 import com.codecool.backend.model.dto.TaskListDTO;
 import com.codecool.backend.model.entity.Task;
-import com.codecool.backend.model.entity.TaskList;
-import com.codecool.backend.repository.AccountRepository;
-import com.codecool.backend.repository.TaskListRepository;
 import com.codecool.backend.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,39 +24,31 @@ public class ApplicationService {
 
     private final static Long HARDCODED_LIST_ID = 0L;
 
-    private final AccountRepository accountRepository;
-    private final TaskListRepository taskListRepository;
     private final TaskRepository taskRepository;
 
 
-    public TaskListDTO getTaskList(Long id) {
+    public TaskListDTO getTaskList(Long id) { // id gets ignored as I'm using the hardcoded list
         AtomicReference<TaskListDTO> taskListDTO = new AtomicReference<>();
 
-//        taskListRepository.findById(id).ifPresent(taskList -> {
-            taskListDTO.set(TaskListDTO.builder()
-//                    .id(taskList.getId())
-                    .id(HARDCODED_LIST_ID)
-//                    .name(taskList.getName())
-                    .name("List title")
-                    .tasks(
-                            sort(
-//                                    taskList.getTasks().stream()
-                                    taskRepository.findAllByListId(HARDCODED_LIST_ID).stream()
-                                            .filter(task -> !task.getDeleted())
-                                            .map(TaskDTO::of),
-                                    "created", "asc"
-                            )
-                    )
-                    .build()
-            );
-//        });
+        taskListDTO.set(TaskListDTO.builder()
+                .id(HARDCODED_LIST_ID)
+                .name("List title")
+                .tasks(
+                        sort(
+                                taskRepository.findAllByListId(HARDCODED_LIST_ID).stream()
+                                        .filter(task -> !task.getDeleted())
+                                        .map(TaskDTO::of),
+                                "created", "asc"
+                        )
+                )
+                .build()
+        );
 
         return taskListDTO.get();
     }
 
-    public List<TaskDTO> getSortedTasks(Long listId, String value, String direction) {
+    public List<TaskDTO> getSortedTasks(Long listId, String value, String direction) { // id gets ignored as I'm using the hardcoded list
         return sort(
-//                taskListRepository.findById(listId).map(TaskList::getTasks).orElse(new ArrayList<>()).stream()
                 taskRepository.findAllByListId(HARDCODED_LIST_ID).stream()
                         .filter(task -> !task.getDeleted())
                         .map(TaskDTO::of),
@@ -68,7 +56,7 @@ public class ApplicationService {
         );
     }
 
-    public void addNewTask(Long listId, NewTaskDTO newTask) {
+    public void addNewTask(Long listId, NewTaskDTO newTask) { // id gets ignored as I'm using the hardcoded list
         if (newTask.getDeadline().isBefore(LocalDate.now())) {
             return;
         }
@@ -76,21 +64,18 @@ public class ApplicationService {
             return;
         }
 
-//        taskListRepository.findById(listId).ifPresent(taskList -> {
-            taskRepository.save(
-                    Task.builder()
-//                            .list(taskList)
-                            .listId(HARDCODED_LIST_ID)
-                            .name(newTask.getName())
-                            .category(newTask.getCategory())
-                            .deadline(newTask.getDeadline())
-                            .hoursEstimated(newTask.getEstimate())
-                            .creationDate(LocalDateTime.now())
-                            .completed(false)
-                            .deleted(false)
-                            .build()
-            );
-//        });
+        taskRepository.save(
+                Task.builder()
+                        .listId(HARDCODED_LIST_ID)
+                        .name(newTask.getName())
+                        .category(newTask.getCategory())
+                        .deadline(newTask.getDeadline())
+                        .hoursEstimated(newTask.getEstimate())
+                        .creationDate(LocalDateTime.now())
+                        .completed(false)
+                        .deleted(false)
+                        .build()
+        );
     }
 
     public void completeTask(Long id, TaskCompletionDTO taskCompletion) {
